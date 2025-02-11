@@ -1,5 +1,5 @@
-#FolderScanner
-###Folder scanner is an application that scans selected folder looking for sizes of the subdirectories and the main folder.
+# FolderScanner
+### Folder scanner is an application that scans selected folder looking for sizes of the subdirectories and the main folder.
 
 To run it on your machine make sure you're using python 3.10 **(no certainty that it will work on higher or lower versions)**
 Install PyQt6 libraries on your virtual environment:
