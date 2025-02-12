@@ -2,7 +2,7 @@ import os
 import sys
 
 from scanner import Scanner, format_bytes
-from colors import lerp_color, Colors
+from colors import get_gradient_value, DEFAULT_GRADIENT
 
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QMenu, QVBoxLayout, QWidget, QPushButton, QTreeWidget,
@@ -119,6 +119,9 @@ class App(QMainWindow):
             dir_size = scanned_data[1]
             dir_children = scanned_data[2]
             parent_item = QTreeWidgetItem([dir_name, format_bytes(dir_size)])
+            parent_item.setData(0, Qt.ItemDataRole.UserRole, dir_name)
+            parent_item.setData(1, Qt.ItemDataRole.UserRole, dir_size)
+
             self.tree_widget.addTopLevelItem(parent_item)
             self.add_children(parent_item, dir_children)
             self.status_bar.showMessage("Tree rendered successfully!")
@@ -134,13 +137,15 @@ class App(QMainWindow):
             dir_name = os.path.basename(dir_path)
             child_item = QTreeWidgetItem([dir_name, format_bytes(dir_size)])
 
-            dir_memory_use_percentage = dir_size / self.directory_scanner.scanned_memory_in_bytes
+            parent_dir_size = parent_item.data(1, Qt.ItemDataRole.UserRole)
+            parent_dir_memory_use_percentage = (dir_size / parent_dir_size) if parent_dir_size > 0 else 0
 
-            color = lerp_color(Colors.GREEN.value, Colors.RED.value, dir_memory_use_percentage)
+            color = get_gradient_value(DEFAULT_GRADIENT, parent_dir_memory_use_percentage)
 
             child_item.setBackground(0, QColor(*color))
 
             child_item.setData(0, Qt.ItemDataRole.UserRole, dir_path)
+            child_item.setData(1, Qt.ItemDataRole.UserRole, dir_size)
             parent_item.addChild(child_item)
             self.add_children(child_item, dir_children)
 
